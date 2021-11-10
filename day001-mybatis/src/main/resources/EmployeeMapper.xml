@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.mapper.EmployeeMapper">
+    <!-- 根据id查询-->
+    <select id="queryById" parameterType="java.lang.Integer" resultType="cn.bdqn.domain.Employee">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            id = #{id}
+    </select>
+    <insert id="save" parameterType="cn.bdqn.domain.Employee">
+        insert into
+            t_employee(emp_name,sex,email,birthday,address)
+        values
+            (#{empName},#{sex},#{email},#{birthday},#{address})
+
+    </insert>
+    <select id="queryByNameAndSex" resultType="cn.bdqn.domain.Employee">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            emp_name = #{empName} and
+              sex = #{sex}
+    </select>
+    <select id="queryByNameAndSex_2" parameterType="cn.bdqn.domain.Employee" resultType="cn.bdqn.domain.Employee">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            emp_name = #{empName} and
+            sex = #{sex}
+    </select>
+    <select id="queryByNameAndSex_3"  resultType="cn.bdqn.domain.Employee">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            emp_name = #{empName} and
+            sex = #{sex}
+    </select>
+    <select id="queryByNameAndSex_4"  resultType="cn.bdqn.domain.Employee">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+           id in (#{list[0]},#{list[1]})
+    </select>
+    <select id="queryByNameAndSex_5"  resultType="cn.bdqn.domain.Employee">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            id in (#{array[0]},#{array[1]})
+    </select>
+    <select id="queryByIdReturnMap"  resultType="map">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            id =#{id}
+    </select>
+    <select id="queryByNameAndSex_6"  resultType="map">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            id in (#{array[0]},#{array[1]})
+    </select>
+    <select id="queryByNameAndSex_7"  resultType="map">
+        select
+            id,emp_name as empName,sex,email,birthday,address
+        from t_employee
+        where
+            id in (#{array[0]},#{array[1]})
+    </select>
+    <select id="queryByIdAndDept"  resultType="cn.bdqn.domain.Employee">
+        SELECT
+            emp.id, emp.sex, emp.emp_name,emp.email,emp.dept_id,emp.birthday,emp.address,
+            dept.id as deptId,dept.dept_name
+        FROM
+            t_employee emp , t_dept dept
+        WHERE
+            emp.dept_id = dept.id AND
+            emp.id = #{id};
+    </select>
+    <resultMap id="EmployeeAndDeptResultMap" type="cn.bdqn.domain.Employee">
+        <id column="id" property="id"></id>
+        <result column="emp_name" property="empName"></result>
+        <result column="deptId" property="dept.id"></result>
+        <result column="dept_name" property="dept.deptName"></result>
+    </resultMap>
+    <select id="queryByIdAndDept_2"  resultMap="EmployeeAndDeptResultMap">
+        SELECT
+            emp.id, emp.sex, emp.emp_name,emp.email,emp.dept_id,emp.birthday,emp.address,
+            dept.id as deptId,dept.dept_name
+        FROM
+            t_employee emp , t_dept dept
+        WHERE
+            emp.dept_id = dept.id AND
+            emp.id = #{id};
+    </select>
+    <resultMap id="EmployeeAndDeptResultMap_2" type="cn.bdqn.domain.Employee">
+        <id column="id" property="id"></id>
+        <result column="emp_name" property="empName" />
+        <result column="sex" property="sex" />
+        <result column="email" property="email" />
+        <result column="birthday" property="birthday" />
+        <result column="address" property="address" />
+        <association property="dept" javaType="cn.bdqn.domain.Dept">
+            <id column="deptId" property="id"/>
+            <result column="dept_name" property="deptName"/>
+        </association>
+    </resultMap>
+    <select id="queryByIdAndDept_3"  resultMap="EmployeeAndDeptResultMap_2">
+        SELECT
+            emp.id, emp.sex, emp.emp_name,emp.email,emp.dept_id,emp.birthday,emp.address,
+            dept.id as deptId,dept.dept_name
+        FROM
+            t_employee emp , t_dept dept
+        WHERE
+            emp.dept_id = dept.id AND
+            emp.id = #{id};
+    </select>
+</mapper>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.mapper.EmployeeMapper">
+
+    <resultMap id="EmployeeResultMap" type="cn.bdqn.domain.Employee">
+        <!--    映射主键    -->
+        <id column="id" property="id"/>
+        <!--    映射普通属性  -->
+
+        <!--
+            使用association定义关联的单个对象的映射规则,可以指定Employee对象关联的是哪个实体对象 。
+             property="dept"：指定哪个属性是Employee的关联对象
+		     select：表示的是dept这个属性的值是通过调用哪一个查询语句给赋值的
+	 		 column：指定将哪一列的值传给这个方法.
+			 流程：使用select指定的方法（传入column指定的这列参数的值）查出对象，
+				   并封装给property指定的属性
+        -->
+        <association property="dept"
+                     select="cn.bdqn.mapper.DeptMapper.queryById"
+                     column="dept_id">
+        </association>
+    </resultMap>
+    <!-- 根据id查询-->
+    <!--  根据员工id查询员工信息【单表查询】  -->
+    <select id="queryById" resultMap="EmployeeResultMap">
+        SELECT id,
+               sex,
+               emp_name as empName,
+               email,
+               dept_id,
+               birthday,
+               address,
+               dept_id
+        FROM t_employee
+        WHERE id = #{id};
+    </select>
+    <!--  根据部门id查询该部门下的所有员工  -->
+    <select id="queryByDeptId" resultType="cn.bdqn.domain.Employee">
+        SELECT id,
+               sex,
+               emp_name as empName,
+               email,
+               birthday,
+               address
+        FROM t_employee
+        WHERE dept_id = #{deptId}
+    </select>
+
+    <!--    <select id="queryByCondition" resultType="cn.bdqn.domain.Employee">-->
+    <!--        SELECT id,-->
+    <!--               sex,-->
+    <!--               emp_name as empName,-->
+    <!--               email,-->
+    <!--               birthday,-->
+    <!--               address-->
+    <!--        FROM t_employee-->
+
+    <!--            <trim prefix="where" suffixOverrides="and">-->
+    <!--        <if test="empName != null and empName != ''">-->
+    <!--            emp_name like concat('%',#{empName},'%') and-->
+    <!--        </if>-->
+    <!--        <if test="email != null and email != ''">-->
+    <!--             email like concat('%',#{email},'%') and-->
+    <!--        </if>-->
+    <!--        <if test="address != null and address != ''">-->
+    <!--            address like concat('%',#{address},'%') and-->
+    <!--        </if>-->
+    <!--        <if test="sex != null and sex != ''">-->
+    <!--            sex = #{sex}-->
+    <!--        </if>-->
+    <!--            </trim>-->
+    <!--       -->
+    <!--    </select>-->
+    <select id="queryByCondition" resultType="cn.bdqn.domain.Employee">
+        SELECT id,
+        sex,
+        emp_name as empName,
+        email,
+        birthday,
+        address
+        FROM t_employee
+        <where>
+            <choose>
+                <when test="empName != null and empName != ''">
+                    emp_name like concat('%',#{empName},'%')
+                </when>
+                <when test="email != null and email != ''">
+                    email like concat('%',#{email},'%')
+                </when>
+                <otherwise>
+                    sex='女'
+                </otherwise>
+            </choose>
+
+        </where>
+    </select>
+    <update id="updateById">
+        update
+        t_employee
+        <set>
+        <if test="empName != null and empName != ''">
+            emp_name = #{empName},
+        </if>
+        <if test="email != null and email != ''">
+            email = #{email},
+        </if>
+        <if test="address != null and address != ''">
+            address = #{address}
+        </if>
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <select id="queryByIdForEach" resultType="cn.bdqn.domain.Employee">
+        SELECT id,
+               sex,
+               emp_name as empName,
+               email,
+               birthday,
+               address
+        FROM t_employee
+<where>
+    id in (
+    <foreach collection="array" item="empId" separator=",">
+    #{empId}
+    </foreach>
+    )
+</where>
+
+    </select>
+    <select id="queryByIds_ForEach" resultType="cn.bdqn.domain.Employee">
+        SELECT id,
+        sex,
+        emp_name as empName,
+        email,
+        birthday,
+        address
+        FROM t_employee
+        <where>
+            id in (
+            <foreach collection="list" item="empId" separator=",">
+                #{empId}
+            </foreach>
+            )
+        </where>
+
+    </select>
+    <select id="queryByMap" resultType="cn.bdqn.domain.Employee">
+        SELECT id,
+        sex,
+        emp_name as empName,
+        email,
+        birthday,
+        address
+        FROM t_employee
+        <where>
+            <if test="sex !=null and sex!=''">
+                and sex=#{sex}
+            </if>
+            id in (
+            <foreach collection="ids" item="empId" separator=",">
+                #{empId}
+            </foreach>
+            )
+        </where>
+
+    </select>
+<insert id="insertBatch">
+    insert into
+t_employee(emp_name,sex)
+VALUES
+<foreach collection="employees" item="emp" separator=",">
+    (#{emp.empName},#{emp.sex})
+</foreach>
+</insert>
+    <insert id="insertBatch_2">
+
+        <foreach collection="employees" item="emp" separator=";">
+            insert into
+            t_employee(emp_name,sex)
+            VALUES
+            (#{emp.empName},#{emp.sex})
+        </foreach>
+    </insert>
+</mapper>

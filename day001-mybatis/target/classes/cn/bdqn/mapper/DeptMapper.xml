@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.mapper.DeptMapper">
+        <!--   根据部门id查询部门信息   -->
+    <!--   根据部门id查询部门信息   -->
+    <select id="queryById" resultType="cn.bdqn.domain.Dept">
+        select
+            id,
+            dept_name as deptName
+        from
+            t_dept
+        where
+            id = #{id}
+    </select>
+
+    <resultMap id="DeptResultMap" type="cn.bdqn.domain.Dept">
+        <!-- 映射dept主键   -->
+        <id column="id" property="id"/>
+        <!-- 映射普通属性【部门名称】    -->
+        <result column="dept_name" property="deptName"/>
+
+        <!--
+             映射关联的属性
+             collection标签表示的是定义集合类型的规则。
+             property="employees" : 关联的属性
+             ofType="cn.bdqn.domain.Employee" : 指定集合里面元素的类型
+        -->
+        <collection property="employeeList" ofType="cn.bdqn.domain.Employee">
+            <!-- 定义这个集合中元素的封装规则 -->
+            <id column="eid" property="id"/>
+            <result column="emp_name" property="empName"/>
+            <result column="email" property="email"/>
+            <result column="sex" property="sex"/>
+            <result column="birthday" property="birthday"/>
+            <result column="address" property="address"/>
+        </collection>
+    </resultMap>
+    <!--   根据部门id查询部门信息   -->
+    <select id="selectById" resultMap="DeptResultMap">
+        SELECT
+            dept.id , dept.dept_name,
+            emp.id as empId, emp.emp_name, emp.sex, emp.email, emp.birthday, emp.address
+        FROM
+            t_dept dept, t_employee emp
+        WHERE
+            dept.id = emp.dept_id AND
+            dept.id = #{id}
+    </select>
+    <resultMap id="DeptResultMapSetps" type="cn.bdqn.domain.Dept">
+        <id column="id" property="id"/>
+        <!-- 映射普通属性【部门名称】    -->
+        <result column="dept_name" property="deptName"/>
+        <collection property="employeeList" ofType="cn.bdqn.domain.Employee"
+        select="cn.bdqn.mapper.EmployeeMapper.queryByDeptId"
+        column="id">
+
+        </collection>
+    </resultMap>
+
+    <select id="selectByIdSteps" resultMap="DeptResultMapSetps">
+        SELECT
+       id,dept_name
+    from
+t_dept
+where
+id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.mapper.EmployeeMapper">
+
+
+    <resultMap id="EmployeeResultMap" type="abc">
+        <result column="emp_name" property="empName"></result>
+    </resultMap>
+    <select id="selectAll" resultMap="EmployeeResultMap">
+        select
+            id,emp_name,sex,email,birthday,address
+        from t_employee
+            </select>
+    <select id="selectById" parameterType="int" resultMap="EmployeeResultMap">
+        select
+            id,emp_name,sex,email,birthday,address
+        from t_employee
+        where
+        id = #{id}
+
+    </select>
+    <select id="selectByLikeName1" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+        select
+            id,emp_name,sex,email,birthday,address
+        from t_employee
+
+        where
+            emp_name like #{empName}
+
+    </select>
+    <select id="selectByLikeName2" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+        select
+            id,emp_name,sex,email,birthday,address
+        from t_employee
+
+        where
+            emp_name like '%${empName}%'
+
+    </select>
+    <select id="selectByLikeName3" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+        select
+            id,emp_name,sex,email,birthday,address
+        from t_employee
+
+        where
+            emp_name like concat('%',#{empName},'%')
+
+    </select>
+    <select id="selectByLikeName4" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+        select
+            id,emp_name,sex,email,birthday,address
+        from t_employee
+
+        where
+            emp_name like concat('%','${empName}','%')
+
+    </select>
+    <insert id="insert" parameterType="cn.bdqn.domain.Employee">
+        insert into
+            t_employee(emp_name,sex,email,birthday,address)
+            values
+        (#{empName},#{sex},#{email},#{birthday},#{address})
+    </insert>
+    <delete id="deleteById" parameterType="java.lang.Integer">
+delete from t_employee where id = #{id}
+    </delete>
+    <update id="updateById" parameterType="cn.bdqn.domain.Employee">
+UPDATE
+    t_employee
+set
+emp_name=#{empName},
+    sex=#{sex}
+where
+id=#{id}
+    </update>
+</mapper>
