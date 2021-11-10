@@ -44,5 +44,6 @@ return null;
 
 //三狗修改了文件
 public void xxx(){
+int x=12/0;
 }
 }
