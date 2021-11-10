@@ -4,6 +4,10 @@ public class Account {
     private Integer id;
     private String name;
     private Integer balance;
+//二狗修改的文件
+public String void(){
+return null;
+}
 
     @Override
     public String toString() {
