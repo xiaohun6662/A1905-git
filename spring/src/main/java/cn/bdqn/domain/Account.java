@@ -37,4 +37,8 @@ public class Account {
     public void setId(Integer id) {
         this.id = id;
     }
+
+//三狗修改了文件
+public void xxx(){
+}
 }
